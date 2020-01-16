@@ -1,7 +1,3 @@
-{% extends "course/base.html" %}
-
-{% block content %}
-
 <br>
 <center><h2>{{ course_name }} Syllabus</h2>
 <p>{{ course_overview }}</p></center>
@@ -15,6 +11,7 @@
 <p><b>Outcomes:</b> {{ module.module_outcome}}</p><br>
 <p><b>Tests:</b> {{ module.module_test}}</p><br>
 <p><b>Resources:</b> {{ module.module_resources}}</p>
+<p><b>Module ID:</b> {{ module.module_id}}</p>
 {{ module.module_body|linebreaks }}<br></li>
 <ol type="i">
 	{% for unit in units %}
@@ -38,7 +35,3 @@
 <p><b>Outcomes:</b> {{ course_outcome}}</p>
 <p><b>Tests:</b> {{ course_test}}</p>
 <p><b>Resources:</b> {{ course_resources}}</p>
-
-<button><a href="/renderpdf/{{course_id}}">Create pdf</a></button>
-
-{% endblock %}
