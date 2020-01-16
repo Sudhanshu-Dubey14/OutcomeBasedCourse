@@ -28,7 +28,9 @@ ALLOWED_HOSTS = []
 # ldap config start
 
 # Baseline configuration.
-AUTH_LDAP_SERVER_URI = "ldap://lab.gdy.club:389"
+# ldaps protocol specify here ldap + tls
+AUTH_LDAP_SERVER_URI = "ldaps://lab.gdy.club:389"
+AUTH_LDAP_START_TLS = True
 
 AUTH_LDAP_BIND_DN = "cn=admin,dc=lab,dc=gdy,dc=club"
 AUTH_LDAP_BIND_PASSWORD = "fillpassword"
@@ -82,7 +84,7 @@ AUTHENTICATION_BACKENDS = (
 
 # ldap config end
 
-LOGIN_URL = '/admin/login'
+LOGIN_URL = "/admin/login"
 
 # Application definition
 
@@ -97,6 +99,7 @@ INSTALLED_APPS = [
     "bootstrap4",
     "crispy_forms",
     "martor",
+    "django_filters",
     # "djmoney",
     "course.apps.CourseConfig",
 ]
@@ -124,7 +127,9 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-            ]
+                "course.verbose_names_context.get_verbose_names",
+            ],
+            "builtins": ["bootstrap4.templatetags.bootstrap4"],
         },
     }
 ]
