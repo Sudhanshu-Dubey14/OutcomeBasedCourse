@@ -1,6 +1,5 @@
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django import forms
-from django.forms.models import inlineformset_factory
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (
     Layout,
@@ -109,7 +108,7 @@ class OutcomeForm(forms.ModelForm):
     )
     action_verb = forms.ModelChoiceField(
         label="Action Verb",
-        queryset=ActionVerb.objects.all(),
+        queryset=ActionVerb.objects.all().order_by("action_verb"),
         widget=forms.Select(attrs={"class": "form-control"}),
         required=True,
     )
@@ -364,7 +363,7 @@ class DisciplineForm(forms.Form):
         self.helper.add_input(Submit("submit", "Submit"))
 
 
-class CourseForm(forms.ModelForm):
+class CourseForm(forms.Form):
     course_id = forms.CharField(
         label=COURSE_SINGULAR + " id",
         max_length=20,
@@ -430,7 +429,7 @@ class CourseForm(forms.ModelForm):
     lecture_contact_hours_per_week = forms.IntegerField(
         label="Lecture contact hours per week",
         max_value=1000,
-        min_value=1,
+        min_value=0,
         widget=forms.NumberInput(
             attrs={
                 "class": "form-control",
@@ -442,7 +441,7 @@ class CourseForm(forms.ModelForm):
     tutorial_contact_hours_per_week = forms.IntegerField(
         label="Tutorial contact hours per week",
         max_value=1000,
-        min_value=1,
+        min_value=0,
         widget=forms.NumberInput(
             attrs={
                 "class": "form-control",
@@ -454,7 +453,7 @@ class CourseForm(forms.ModelForm):
     practical_contact_hours_per_week = forms.IntegerField(
         label="Practical contact hours per week",
         max_value=1000,
-        min_value=1,
+        min_value=0,
         widget=forms.NumberInput(
             attrs={
                 "class": "form-control",
@@ -488,10 +487,6 @@ class CourseForm(forms.ModelForm):
         ),
         required=False,
     )
-
-    class Meta:
-        model = Course
-        exclude = []
 
     def __init__(self, *args, **kwargs):
         super(CourseForm, self).__init__(*args, **kwargs)
@@ -613,7 +608,32 @@ class ModuleForm(forms.Form):
         super(ModuleForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = "POST"
-        self.helper.add_input(Submit("submit", "Submit"))
+        self.helper.form_class = "form-horizontal"
+        self.helper.label_class = "col-md-3"
+        self.helper.field_class = "col-md-9"
+        self.helper.layout = Layout(
+            Div(
+                Field("module_title"),
+                HTML("<br>"),
+                Field("module_short_name"),
+                HTML("<br>"),
+                Field("module_overview"),
+                HTML("<br>"),
+                Fieldset("Add Outcomes", FormsetLayoutObject("outcomes")),
+                HTML("<br>"),
+                Field("module_objective"),
+                HTML("<br>"),
+                Field("module_body"),
+                HTML("<br>"),
+                Field("module_resources"),
+                HTML("<br>"),
+                Field("module_test"),
+                HTML("<br>"),
+                Field("course"),
+                HTML("<br>"),
+                ButtonHolder(Submit("submit", "Submit")),
+            )
+        )
 
 
 class UnitForm(forms.Form):
@@ -696,13 +716,34 @@ class UnitForm(forms.Form):
         super(UnitForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = "POST"
-        self.helper.add_input(Submit("submit", "Submit"))
+        self.helper.form_class = "form-horizontal"
+        self.helper.label_class = "col-md-3"
+        self.helper.field_class = "col-md-9"
+        self.helper.layout = Layout(
+            Div(
+                Field("unit_name"),
+                HTML("<br>"),
+                Field("unit_short_name"),
+                HTML("<br>"),
+                Field("unit_overview"),
+                HTML("<br>"),
+                Fieldset("Add Outcomes", FormsetLayoutObject("outcomes")),
+                HTML("<br>"),
+                Field("unit_objective"),
+                HTML("<br>"),
+                Field("unit_body"),
+                HTML("<br>"),
+                Field("unit_resources"),
+                HTML("<br>"),
+                Field("unit_test"),
+                HTML("<br>"),
+                Field("module"),
+                HTML("<br>"),
+                ButtonHolder(Submit("submit", "Submit")),
+            )
+        )
 
 
-OutcomeFormSet = inlineformset_factory(
-    parent_model=Course,
-    model=Outcome,
-    form=OutcomeForm,
-    extra=1,
-    can_delete=True,
+OutcomeFormSet = forms.models.modelformset_factory(
+    model=Outcome, form=OutcomeForm, extra=1, can_delete=True,
 )
